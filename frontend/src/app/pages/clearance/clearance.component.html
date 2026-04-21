@@ -1,0 +1,76 @@
+<div class="page-container">
+    <div class="page-header">
+        <h1><mat-icon>pending_actions</mat-icon> Pending Clearances</h1>
+        <button mat-stroked-button (click)="loadPending()" [disabled]="isLoading"><mat-icon>refresh</mat-icon> Refresh</button>
+    </div>
+
+    <div *ngIf="isLoading" class="spinner-center"><mat-spinner diameter="48"></mat-spinner><p>Loading...</p></div>
+
+    <div *ngIf="!isLoading && pendingClearances.length === 0" class="empty-message">
+        <mat-icon>check_circle</mat-icon> No pending clearances.
+    </div>
+
+    <div *ngIf="!isLoading && pendingClearances.length > 0" class="table-responsive">
+        <table mat-table [dataSource]="pendingClearances" class="data-table">
+            <ng-container matColumnDef="productionOrderId">
+                <th mat-header-cell *matHeaderCellDef>Order ID</th>
+                <td mat-cell *matCellDef="let c">{{ c.productionOrderId }}</td>
+            </ng-container>
+            <ng-container matColumnDef="batchNumber">
+                <th mat-header-cell *matHeaderCellDef>Batch</th>
+                <td mat-cell *matCellDef="let c">{{ c.batchNumber }}</td>
+            </ng-container>
+            <ng-container matColumnDef="operationId">
+                <th mat-header-cell *matHeaderCellDef>Op ID</th>
+                <td mat-cell *matCellDef="let c">{{ c.operationId }}</td>
+            </ng-container>
+            <ng-container matColumnDef="inspectionId">
+                <th mat-header-cell *matHeaderCellDef>Inspection ID</th>
+                <td mat-cell *matCellDef="let c">{{ c.inspectionId }}</td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let c"><span class="status-chip" [ngClass]="statusClass(c.status)">{{ c.status }}</span></td>
+            </ng-container>
+            <ng-container matColumnDef="judgment">
+                <th mat-header-cell *matHeaderCellDef>Auto Judgment</th>
+                <td mat-cell *matCellDef="let c">{{ c.judgment || '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let c">
+                    <button mat-raised-button color="primary" size="small" (click)="openAcknowledge(c)">Acknowledge</button>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+    </div>
+
+    <!-- Acknowledge Dialog (inline) -->
+    <div class="dialog-overlay" *ngIf="selectedClearance">
+        <mat-card class="dialog-card">
+            <mat-card-header><mat-card-title>Acknowledge Clearance</mat-card-title></mat-card-header>
+            <mat-card-content>
+                <p><strong>Order:</strong> {{ selectedClearance.productionOrderId }}</p>
+                <p><strong>Batch:</strong> {{ selectedClearance.batchNumber }}</p>
+                <p><strong>Inspection:</strong> {{ selectedClearance.inspectionId }}</p>
+                <mat-form-field appearance="outline" style="width:100%">
+                    <mat-label>Judgment</mat-label>
+                    <mat-select [(ngModel)]="judgment">
+                        <mat-option value="PASS">PASS</mat-option>
+                        <mat-option value="FAIL">FAIL</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" style="width:100%">
+                    <mat-label>Remarks</mat-label>
+                    <textarea matInput rows="3" [(ngModel)]="remarks"></textarea>
+                </mat-form-field>
+            </mat-card-content>
+            <mat-card-actions align="end">
+                <button mat-button (click)="selectedClearance = null">Cancel</button>
+                <button mat-raised-button color="primary" (click)="submitAcknowledge()">Submit</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>

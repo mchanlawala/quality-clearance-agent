@@ -1,0 +1,59 @@
+<div class="page-container">
+    <div class="page-header">
+        <h1><mat-icon>bug_report</mat-icon> Defect Entry</h1>
+    </div>
+
+    <mat-card>
+        <mat-card-header><mat-card-title>Record a New Defect</mat-card-title></mat-card-header>
+        <mat-card-content>
+            <div class="form-grid">
+                <mat-form-field appearance="outline">
+                    <mat-label>Production Order ID</mat-label>
+                    <input matInput [(ngModel)]="defect.productionOrderId" placeholder="e.g., 1000012501">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Batch Number</mat-label>
+                    <input matInput [(ngModel)]="defect.batchNumber" placeholder="e.g., BATCH-1000012501-45-1">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Operation ID</mat-label>
+                    <input matInput type="number" [(ngModel)]="defect.operationId">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Inspection ID</mat-label>
+                    <input matInput [(ngModel)]="defect.inspectionId">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Defect Code</mat-label>
+                    <input matInput [(ngModel)]="defect.defectCode" placeholder="e.g., LOW_POWER, MICRO_CRACK">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Description</mat-label>
+                    <textarea matInput rows="2" [(ngModel)]="defect.description"></textarea>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Quantity Affected</mat-label>
+                    <input matInput type="number" [(ngModel)]="defect.quantityAffected">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Severity</mat-label>
+                    <mat-select [(ngModel)]="defect.severity">
+                        <mat-option value="Minor">Minor</mat-option>
+                        <mat-option value="Major">Major</mat-option>
+                        <mat-option value="Critical">Critical</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Remarks</mat-label>
+                    <textarea matInput rows="2" [(ngModel)]="defect.remarks"></textarea>
+                </mat-form-field>
+                <mat-checkbox [(ngModel)]="defect.reworkRequired">Rework Required</mat-checkbox>
+            </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+            <button mat-raised-button color="primary" (click)="submitDefect()" [disabled]="isLoading">
+                <mat-icon>save</mat-icon> Create Defect Report
+            </button>
+        </mat-card-actions>
+    </mat-card>
+</div>

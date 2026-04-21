@@ -1,0 +1,98 @@
+<!-- src/app/pages/dashboard/dashboard.component.html -->
+
+<div class="page-container">
+    <div class="page-header">
+        <h1><mat-icon>dashboard</mat-icon> Quality Dashboard</h1>
+        <button mat-stroked-button (click)="loadDashboard()" [disabled]="isLoading">
+            <mat-icon>refresh</mat-icon> Refresh
+        </button>
+    </div>
+
+    <div *ngIf="isLoading" class="spinner-center">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Loading dashboard...</p>
+    </div>
+
+    <div *ngIf="!isLoading && errorMsg" class="error-box">
+        <mat-icon>error</mat-icon> {{ errorMsg }}
+        <button mat-button (click)="loadDashboard()">Retry</button>
+    </div>
+
+    <ng-container *ngIf="!isLoading && !errorMsg">
+        <div class="kpi-grid">
+            <mat-card class="kpi-card">
+                <div class="kpi-icon blue"><mat-icon>inventory_2</mat-icon></div>
+                <div class="kpi-val">{{ statuses.length }}</div>
+                <div class="kpi-label">Total Inspections</div>
+            </mat-card>
+            <mat-card class="kpi-card">
+                <div class="kpi-icon green"><mat-icon>check_circle</mat-icon></div>
+                <!-- Use getter instead of inline filter -->
+                <div class="kpi-val">{{ clearedCount }}</div>
+                <div class="kpi-label">Cleared</div>
+            </mat-card>
+            <mat-card class="kpi-card">
+                <div class="kpi-icon red"><mat-icon>bug_report</mat-icon></div>
+                <div class="kpi-val">{{ defects.length }}</div>
+                <div class="kpi-label">Defects</div>
+            </mat-card>
+            <mat-card class="kpi-card">
+                <div class="kpi-icon orange"><mat-icon>replay</mat-icon></div>
+                <div class="kpi-val">{{ reworkOrders.length }}</div>
+                <div class="kpi-label">Rework Orders</div>
+            </mat-card>
+        </div>
+
+        <div class="charts-row">
+            <mat-card class="chart-card">
+                <mat-card-header><mat-card-title>Clearance Status</mat-card-title></mat-card-header>
+                <mat-card-content>
+                    <div class="chart-wrap" style="height:250px">
+                        <canvas baseChart [data]="statusChartData" [options]="chartOptions" type="pie"></canvas>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <mat-card style="margin-top: 24px;">
+            <mat-card-header>
+                <mat-card-title>Recent Defects</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="table-responsive" *ngIf="defects.length">
+                    <table class="data-table">
+                        <thead>
+                        <tr><th>Defect ID</th><th>Order ID</th><th>Batch</th><th>Code</th><th>Qty</th><th>Severity</th></tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let d of defects.slice(0,5)">
+                            <td>{{ d.defectId }}</td>
+                            <td>{{ d.productionOrderId }}</td>
+                            <td>{{ d.batchNumber }}</td>
+                            <td>{{ d.defectCode }}</td>
+                            <td>{{ d.quantityAffected }}</td>
+                            <td>{{ d.severity }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div *ngIf="!defects.length" class="empty-message">No defects recorded.</div>
+            </mat-card-content>
+        </mat-card>
+
+        <mat-card style="margin-top: 24px;">
+            <mat-card-header>
+                <mat-card-title>🤖 AI Insights</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div *ngIf="!insights && !insightsLoading">
+                    <button mat-raised-button color="primary" (click)="loadInsights()">
+                        <mat-icon>psychology</mat-icon> Load AI Analysis
+                    </button>
+                </div>
+                <div *ngIf="insightsLoading" class="loading-spinner"><mat-spinner diameter="24"></mat-spinner> Fetching insights...</div>
+                <pre *ngIf="insights" class="insights-pre">{{ insights }}</pre>
+            </mat-card-content>
+        </mat-card>
+    </ng-container>
+</div>
